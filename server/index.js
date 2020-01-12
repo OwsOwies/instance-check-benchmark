@@ -1,5 +1,6 @@
 var http = require('http');
 var benchmark = require('benchmark');
+var WebSocketServer = require('websocket').server;
 
 class SomeClass {
 	constructor(someProp) {
@@ -64,12 +65,22 @@ propertyFailTest = () => {
 	}
 }
 
-http.createServer(function (request, response) {
-	 response.writeHead(200, {'Content-Type': 'text/plain'});
+server = http.createServer(function (request, response) {}).listen(8081);
 
-	 console.log(runBenchmark());
+wsServer = new WebSocketServer({
+	httpServer: server
+});
 
-   response.end('Hello World\n');
-}).listen(8081);
+wsServer.on('request', function(request) {
+	console.log('new connection');
+	var connection = request.accept(null, request.origin);
+
+	connection.on('message', function(userMessage) {
+		console.log(userMessage);
+		if (userMessage.utf8Data === 'benchmark')  {
+			runBenchmark();
+		}
+	});
+})
 
 console.log('Server running at http://127.0.0.1:8081/');
