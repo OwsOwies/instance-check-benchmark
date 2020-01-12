@@ -13,7 +13,7 @@ class SomeClass {
 
 class SomeOtherClass {}
 
-function runBenchmark() {
+function runBenchmark(wsConnection) {
 	const suite = benchmark.Suite('instance-check-suite', {
 		onStart: this.onSuiteStart,
 	})
@@ -22,11 +22,20 @@ function runBenchmark() {
 	.add('instanceOf fail', this.instanceOfFailTest)
 	.add('property check fail', this.propertyFailTest)
 	.on('complete', function() {
-		console.log(this[0].toString());
-		console.log(this[1].toString());
-		insertResult(this);
+		const result = createBenchmarkResultObj(this)
+		insertResult(result);
+		wsConnection.send(JSON.stringify([result]))
 	})
 	.run({ async: true});
+}
+
+function createBenchmarkResultObj(result) {
+	return {
+		iof_success: result[0].hz,
+		prop_check_success: result[1].hz,
+		iof_fail: result[2].hz,
+		prop_check_fail: result[3].hz
+	} 
 }
 
 onSuiteStart = () => {
@@ -71,10 +80,10 @@ propertyFailTest = () => {
 
 /** DATABASE */
 
-function insertResult(benchmarkResult) {
+function insertResult(result) {
 	db.run(
 		'INSERT INTO Benchmark(iof_success, prop_check_success, iof_fail, prop_check_fail) VALUES (?, ?, ?, ?)',
-		[benchmarkResult[0].hz, benchmarkResult[1].hz, benchmarkResult[2].hz, benchmarkResult[3].hz],
+		[result.iof_success, result.prop_check_success, result.iof_fail, result.prop_check_fail],
 		function(err) {
 			if (err) {
 				console.log(err.message);
@@ -109,7 +118,7 @@ wsServer.on('request', function(request) {
 	connection.on('message', function(userMessage) {
 		console.log(userMessage);
 		if (userMessage.utf8Data === 'benchmark')  {
-			runBenchmark();
+			runBenchmark(connection);
 		}
 	});
 })

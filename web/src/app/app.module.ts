@@ -5,13 +5,13 @@ import { AppComponent } from './app.component';
 import { WebsocketService } from './services/websocket.service';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
-  providers: [WebsocketService],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent
+	],
+	imports: [
+		BrowserModule
+	],
+	providers: [WebsocketService],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }
