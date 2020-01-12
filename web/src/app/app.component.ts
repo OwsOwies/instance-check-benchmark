@@ -20,6 +20,6 @@ export class AppComponent {
 
 	decodeMessage = (message: any): void => {
 		const benchmarks = JSON.parse(message.data) as Benchmark[];
-		this.results.push(...benchmarks);
+		this.results = [...this.results, ...benchmarks];
 	}
 }
