@@ -14,8 +14,9 @@ export class AppComponent {
 		this.webSocketService.connect('ws://127.0.0.1:8081').subscribe(this.decodeMessage);
 	}
 
-	public onBenchmarkRequest(): void {
-		this.webSocketService.requestBenchmark();
+	public onBenchmarkRequest($event: string): void {
+		console.log(JSON.parse($event));
+		this.webSocketService.requestBenchmark($event);
 	}
 
 	decodeMessage = (message: any): void => {

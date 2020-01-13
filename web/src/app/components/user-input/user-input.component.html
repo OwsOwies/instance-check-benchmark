@@ -1,0 +1,14 @@
+<form>
+  <mat-form-field>
+    <textarea matInput placeholder="JSON" [formControl]="formControl"
+           [errorStateMatcher]="matcher" rows="10"></textarea>
+    <mat-hint>Place JSON-defined object here</mat-hint>
+    <mat-error *ngIf="formControl.hasError('json') && !formControl.hasError('required')">
+      Please enter a valid JSON 
+    </mat-error>
+    <mat-error *ngIf="formControl.hasError('required')">
+      JSON is <strong>required</strong>
+    </mat-error>
+	</mat-form-field>
+</form>
+<button mat-raised-button color="primary" [disabled]="formControl.invalid" (click)="onSubmit()">Request benchmark</button>

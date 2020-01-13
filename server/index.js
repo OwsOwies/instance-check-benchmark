@@ -5,28 +5,26 @@ const sqlite3 = require('sqlite3').verbose();
 
 /** BENCHMARK */
 
-class SomeClass {
-	constructor(someProp) {
-		this.someProp = 1;
-	}
-}
-
 class SomeOtherClass {}
 
-function runBenchmark(wsConnection) {
+function runBenchmark(wsConnection, classShape) {
+	const classCtor = this.createUserDefinedClass(classShape);
+	const classKeys = Object.keys(classShape);
+
 	const suite = benchmark.Suite('instance-check-suite', {
-		onStart: this.onSuiteStart,
+		onStart: () => this.onSuiteStart(classCtor, classShape),
 	})
-	.add('instanceOf success', this.instanceOfSuccessTest)
-	.add('property check success', this.propertyCheckSuccess)
-	.add('instanceOf fail', this.instanceOfFailTest)
-	.add('property check fail', this.propertyFailTest)
+	.add('instanceOf success', () => this.instanceOfSuccessTest(classCtor))
+	.add('property check success', () => this.propertyCheckSuccess(classKeys))
+	.add('instanceOf fail', () => this.instanceOfFailTest(classCtor))
+	.add('property check fail', () => this.propertyFailTest(classKeys))
 	.on('complete', function() {
 		const result = createBenchmarkResultObj(this)
+		console.log('Newest result', result);
 		insertResult(result);
 		wsConnection.send(JSON.stringify([result]))
 	})
-	.run({ async: true});
+	.run({ async: false });
 }
 
 function createBenchmarkResultObj(result) {
@@ -38,43 +36,57 @@ function createBenchmarkResultObj(result) {
 	} 
 }
 
-onSuiteStart = () => {
-	console.log('suite start');
+createUserDefinedClass = (classParams) => {
+	const classCtor = class SomeClass {
+		constructor(classParams) {
+			const keys = Object.keys(classParams);
+			keys.forEach(key => this[key] = classParams[key]);
+		} 
+	}
+	return classCtor;
+}
 
+onSuiteStart = (classCtor, classParams) => {
+	console.log('suite start');
+	console.log('Class shape: ', new classCtor(classParams))
 	this.someClassItems = [];
 	this.someOtherClassItems = [];
 
 	for (let i = 0; i < 1000; i++) {
-		this.someClassItems.push(new SomeClass(1));
+		this.someClassItems.push(new classCtor(classParams));
 		this.someOtherClassItems.push(new SomeOtherClass());
 	}
 }
 
-instanceOfSuccessTest = () => {
+instanceOfSuccessTest = (classCtor) => {
 	for (let i = 0; i < 1000; i++) {
 		const t = this.someClassItems[i];
-		const result = t instanceof SomeClass;
+		const result = t instanceof classCtor;
 	}
 }
 
-propertyCheckSuccess = () => {
+propertyCheckSuccess = (classKeys) => {
 	for (let i = 0; i < 1000; i++) {
 		const t = this.someClassItems[i];
-		const result = t.property;
+		let combined = false;
+		classKeys.forEach(key => (combined = combined && t[key]));
+		const result = combined;
 	}
 }
 
-instanceOfFailTest = () => {
+instanceOfFailTest = (classCtor) => {
 	for (let i = 0; i < 1000; i++) {
 		const t = this.someOtherClassItems[i];
-		const result = t instanceof SomeClass;
+		const result = t instanceof classCtor;
 	}
 }
 
-propertyFailTest = () => {
+propertyFailTest = (classKeys) => {
 	for (let i = 0; i < 1000; i++) {
 		const t = this.someOtherClassItems[i];
-		const result = t.property;
+		let combined = false;
+		classKeys.forEach(key => (combined = combined && t[key]));
+		const result = combined;
 	}
 }
 
@@ -97,7 +109,7 @@ function getBenchmarkResults(wsConnection) {
 		if (err) {
 			console.error(err.message);
 		}
-		console.log(rows);
+		console.log("Current rows length" + rows.length);
 		wsConnection.send(JSON.stringify(rows));
 	});
 }
@@ -117,8 +129,9 @@ wsServer.on('request', function(request) {
 
 	connection.on('message', function(userMessage) {
 		console.log(userMessage);
-		if (userMessage.utf8Data === 'benchmark')  {
-			runBenchmark(connection);
+		const msg = JSON.parse(userMessage.utf8Data);
+		if (msg.code === 'benchmark')  {
+			runBenchmark(connection, msg.payload);
 		}
 	});
 })

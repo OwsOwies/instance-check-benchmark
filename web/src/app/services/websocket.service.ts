@@ -27,7 +27,8 @@ export class WebsocketService {
 		).subscribe(this.socket);
 	}
 
-	public requestBenchmark(): void {
-		this.ws.send('benchmark');
+	public requestBenchmark(json: string): void {
+		const msg = { code: 'benchmark', payload: JSON.parse(json) };
+		this.ws.send(JSON.stringify(msg));
 	}
 }

@@ -1,5 +1,5 @@
 import { Component, Input} from '@angular/core';
-import { Benchmark } from '../models/benchmark';
+import { Benchmark } from '../../models/benchmark';
 
 @Component({
 	selector: 'app-result-table',

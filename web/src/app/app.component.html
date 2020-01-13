@@ -1,3 +1,8 @@
-<button (click)="onBenchmarkRequest()">request</button>
+<span>In typescript there are two different ways to check if object is instance of specific class.</span><br>
+<span>First way: using javascript instanceof operator</span><br>
+<span>Second way: using type guard, checking if object has specific property defined.</span><br>
+<span>Perform benchmark by placing JSON defined class shape into input.</span><br>
+<span>Benchmark will create class dynamically by this JSON and test its instances against it.</span><br>
+<app-user-input (submitForm)="onBenchmarkRequest($event)"></app-user-input>
 <app-chart [benchmarks]="results"></app-chart>
 <app-result-table [benchmarks]="results"></app-result-table>
