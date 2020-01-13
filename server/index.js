@@ -50,30 +50,28 @@ onSuiteStart = (classCtor, classParams) => {
 	console.log('Class shape: ', new classCtor(classParams))
 	this.someClassItem = new classCtor(classParams);
 	this.someOtherClassItem = new SomeOtherClass();
+	this.result = null;
+	this.combined = null;
 }
 
 instanceOfSuccessTest = (classCtor) => {
-	const t = this.someClassItem;
-	const result = t instanceof classCtor;
+	this.result = this.someClassItem instanceof classCtor;
 }
 
 propertyCheckSuccess = (classKeys) => {
-	const t = this.someClassItems;
-	let combined = false;
-	classKeys.map(key => (combined = combined && t[key]));
-	const result = combined;
+	this.combined = true;
+	classKeys.map(key => (this.combined = this.combined && this.someClassItem[key]));
+	this.result = this.combined;
 }
 
 instanceOfFailTest = (classCtor) => {
-	const t = this.someOtherClassItem;
-	const result = t instanceof classCtor;
+	this.result = this.someOtherClassItem instanceof classCtor;
 }
 
 propertyFailTest = (classKeys) => {
-	const t = this.someOtherClassItem;
-	let combined = false;
-	classKeys.map(key => (combined = combined && t[key]));
-	const result = combined;
+	this.combined = true;
+	classKeys.map(key => (this.combined = this.combined && this.someOtherClassItem[key]));
+	this.result = this.combined;
 }
 
 /** DATABASE */
