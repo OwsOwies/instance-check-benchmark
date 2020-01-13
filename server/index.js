@@ -11,9 +11,8 @@ function runBenchmark(wsConnection, classShape) {
 	const classCtor = this.createUserDefinedClass(classShape);
 	const classKeys = Object.keys(classShape);
 
-	const suite = benchmark.Suite('instance-check-suite', {
-		onStart: () => this.onSuiteStart(classCtor, classShape),
-	})
+	this.onSuiteStart(classCtor, classShape)
+	const suite = benchmark.Suite('instance-check-suite')
 	.add('instanceOf success', () => this.instanceOfSuccessTest(classCtor))
 	.add('property check success', () => this.propertyCheckSuccess(classKeys))
 	.add('instanceOf fail', () => this.instanceOfFailTest(classCtor))
@@ -24,7 +23,7 @@ function runBenchmark(wsConnection, classShape) {
 		insertResult(result);
 		wsConnection.send(JSON.stringify([result]))
 	})
-	.run({ async: false });
+	.run({ async: true });
 }
 
 function createBenchmarkResultObj(result) {
@@ -49,45 +48,32 @@ createUserDefinedClass = (classParams) => {
 onSuiteStart = (classCtor, classParams) => {
 	console.log('suite start');
 	console.log('Class shape: ', new classCtor(classParams))
-	this.someClassItems = [];
-	this.someOtherClassItems = [];
-
-	for (let i = 0; i < 1000; i++) {
-		this.someClassItems.push(new classCtor(classParams));
-		this.someOtherClassItems.push(new SomeOtherClass());
-	}
+	this.someClassItem = new classCtor(classParams);
+	this.someOtherClassItem = new SomeOtherClass();
 }
 
 instanceOfSuccessTest = (classCtor) => {
-	for (let i = 0; i < 1000; i++) {
-		const t = this.someClassItems[i];
-		const result = t instanceof classCtor;
-	}
+	const t = this.someClassItem;
+	const result = t instanceof classCtor;
 }
 
 propertyCheckSuccess = (classKeys) => {
-	for (let i = 0; i < 1000; i++) {
-		const t = this.someClassItems[i];
-		let combined = false;
-		classKeys.forEach(key => (combined = combined && t[key]));
-		const result = combined;
-	}
+	const t = this.someClassItems;
+	let combined = false;
+	classKeys.map(key => (combined = combined && t[key]));
+	const result = combined;
 }
 
 instanceOfFailTest = (classCtor) => {
-	for (let i = 0; i < 1000; i++) {
-		const t = this.someOtherClassItems[i];
-		const result = t instanceof classCtor;
-	}
+	const t = this.someOtherClassItem;
+	const result = t instanceof classCtor;
 }
 
 propertyFailTest = (classKeys) => {
-	for (let i = 0; i < 1000; i++) {
-		const t = this.someOtherClassItems[i];
-		let combined = false;
-		classKeys.forEach(key => (combined = combined && t[key]));
-		const result = combined;
-	}
+	const t = this.someOtherClassItem;
+	let combined = false;
+	classKeys.map(key => (combined = combined && t[key]));
+	const result = combined;
 }
 
 /** DATABASE */
