@@ -2,3 +2,14 @@
 	padding: 50px;
 	display: block;
 }
+
+.progress {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 50px;
+	mat-progress-spinner {
+		margin-left: 20px;
+	}
+}

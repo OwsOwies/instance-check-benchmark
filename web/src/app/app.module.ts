@@ -14,6 +14,7 @@ import { ChartComponent } from './components/chart/chart.component';
 import { UserInputComponent } from './components/user-input/user-input.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SingleChartComponent } from './components/single-chart/single-chart.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
 	entryComponents: [ClassShapeDialogComponent],
@@ -32,6 +33,7 @@ import { SingleChartComponent } from './components/single-chart/single-chart.com
 		MatButtonModule,
 		MatDialogModule,
 		MatTableModule,
+		MatProgressSpinnerModule,
 		NgxChartsModule,
 		ReactiveFormsModule,
 		FormsModule,
