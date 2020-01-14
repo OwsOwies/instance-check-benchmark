@@ -13,6 +13,7 @@ import { ResultTableComponent, ClassShapeDialogComponent } from './components/ta
 import { ChartComponent } from './components/chart/chart.component';
 import { UserInputComponent } from './components/user-input/user-input.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { SingleChartComponent } from './components/single-chart/single-chart.component';
 
 @NgModule({
 	entryComponents: [ClassShapeDialogComponent],
@@ -21,6 +22,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 		ChartComponent,
 		ClassShapeDialogComponent,
 		ResultTableComponent,
+		SingleChartComponent,
 		UserInputComponent,
 	],
 	imports: [

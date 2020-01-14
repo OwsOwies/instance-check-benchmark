@@ -4,5 +4,6 @@
 <span>Perform benchmark by placing JSON defined class shape into input.</span><br>
 <span>Benchmark will create class dynamically by this JSON and test its instances against it.</span><br>
 <app-user-input (submitForm)="onBenchmarkRequest($event)"></app-user-input>
+<app-single-chart [benchmark]="currentlySelected"></app-single-chart>
 <app-chart [benchmarks]="results"></app-chart>
-<app-result-table [benchmarks]="results"></app-result-table>
+<app-result-table [benchmarks]="results" (showChart)="onChangeSelected($event)"></app-result-table>

@@ -1,0 +1,11 @@
+<div style="margin-bottom: 20px;">Selected or most recent benchmark:</div>
+<ngx-charts-bar-vertical
+	*ngIf="data"
+	[results]="data"
+	[xAxis]="true"
+	[yAxis]="true"
+	[showXAxisLabel]="true"
+	[showYAxisLabel]="true"
+	[yAxisLabel]="'Ops per second'"
+></ngx-charts-bar-vertical>
+<div>Class shape: {{classShape}}</div>
