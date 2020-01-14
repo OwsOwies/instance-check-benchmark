@@ -18,7 +18,7 @@ function runBenchmark(wsConnection, classShape) {
 	.add('instanceOf fail', () => this.instanceOfFailTest(classCtor))
 	.add('property check fail', () => this.propertyFailTest(classKeys))
 	.on('complete', function() {
-		const result = createBenchmarkResultObj(this)
+		const result = createBenchmarkResultObj(this, new classCtor(classShape))
 		console.log('Newest result', result);
 		insertResult(result);
 		wsConnection.send(JSON.stringify([result]))
@@ -26,12 +26,13 @@ function runBenchmark(wsConnection, classShape) {
 	.run({ async: true });
 }
 
-function createBenchmarkResultObj(result) {
+function createBenchmarkResultObj(result, classShape) {
 	return {
 		iof_success: result[0].hz,
 		prop_check_success: result[1].hz,
 		iof_fail: result[2].hz,
-		prop_check_fail: result[3].hz
+		prop_check_fail: result[3].hz,
+		class_shape: JSON.stringify(classShape),
 	} 
 }
 
@@ -78,8 +79,8 @@ propertyFailTest = (classKeys) => {
 
 function insertResult(result) {
 	db.run(
-		'INSERT INTO Benchmark(iof_success, prop_check_success, iof_fail, prop_check_fail) VALUES (?, ?, ?, ?)',
-		[result.iof_success, result.prop_check_success, result.iof_fail, result.prop_check_fail],
+		'INSERT INTO Benchmark(iof_success, prop_check_success, iof_fail, prop_check_fail, class_shape) VALUES (?, ?, ?, ?, ?)',
+		[result.iof_success, result.prop_check_success, result.iof_fail, result.prop_check_fail, result.class_shape],
 		function(err) {
 			if (err) {
 				console.log(err.message);

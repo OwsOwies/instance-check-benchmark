@@ -5,18 +5,21 @@ import { MatTableModule } from '@angular/material/table';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppComponent } from './app.component';
 import { WebsocketService } from './services/websocket.service';
-import { ResultTableComponent } from './components/table/table.component';
+import { ResultTableComponent, ClassShapeDialogComponent } from './components/table/table.component';
 import { ChartComponent } from './components/chart/chart.component';
 import { UserInputComponent } from './components/user-input/user-input.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @NgModule({
+	entryComponents: [ClassShapeDialogComponent],
 	declarations: [
 		AppComponent,
 		ChartComponent,
+		ClassShapeDialogComponent,
 		ResultTableComponent,
 		UserInputComponent,
 	],
@@ -25,6 +28,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 		BrowserAnimationsModule,
 		MatInputModule,
 		MatButtonModule,
+		MatDialogModule,
 		MatTableModule,
 		NgxChartsModule,
 		ReactiveFormsModule,
